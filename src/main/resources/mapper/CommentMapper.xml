@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecut.dao.CommentDao">
+
+    <resultMap id="BaseResultMap" type="com.ecut.domain.Comment">
+        <id column="id"  property="id" />
+        <result column="nickname"  property="nickname" />
+        <result column="email"  property="email" />
+        <result column="content"  property="content" />
+        <result column="avatar"  property="avatar" />
+        <result column="create_time"  property="createTime" />
+        <result column="blog_id"  property="blogId" />
+        <result column="parent_comment_id"  property="parentCommentId"></result>
+        <result column="adminComment"  property="adminComment"></result>
+    </resultMap>
+
+
+
+    <resultMap id="ChildComment" type="com.ecut.domain.Ccomment">
+        <id column="id"  property="id" />
+        <result column="nickname"  property="nickname" />
+        <result column="email"  property="email" />
+        <result column="content"  property="content" />
+        <result column="avatar"  property="avatar" />
+        <result column="create_time"  property="createTime" />
+        <result column="blog_id"  property="blogId" />
+        <result column="parent_comment_id"  property="parentCommentId"></result>
+        <result column="adminComment"  property="adminComment"></result>
+    </resultMap>
+
+
+
+    <select id="findByBlogIdParentIdNull" resultType="com.ecut.domain.Comment">
+        select c.id cid,c.nickname,c.email,c.content,c.avatar,c.create_time,c.blog_id,c.parent_comment_id
+        from blog.t_comment c
+        where c.blog_id = #{blogId} and c.parent_comment_id = #{blogParentId}
+        order by c.create_time desc
+    </select>
+
+    <insert id="saveComment" parameterType="com.ecut.domain.Comment">
+        insert into blog.t_comment (nickname,email,content,avatar,create_time,blog_id,parent_comment_id)
+        values (#{nickname},#{email},#{content},#{avatar},#{createTime},#{blogId},#{parentCommentId});
+    </insert>
+
+
+
+    <select id="findByParentIdNotNull" resultType="com.ecut.domain.Comment">
+        select *
+        from comment c
+        where c.parent_comment_id = #{id}
+        order by c.create_time desc
+    </select>
+
+    <!--查询所属博客的评论-->
+    <select id="findCommentsByBlogId" resultMap="BaseResultMap">
+        select *
+        from t_comment
+        where blog_id = #{id}
+        order by create_time desc
+    </select>
+
+
+
+    <!--查询子评论-->
+    <select id="findChildComment" resultMap="ChildComment">
+        select cc.*
+        from t_ccomment cc, t_comment c
+        where cc.parent_comment_id = c.id and c.id = #{id}
+        order by cc.create_time desc
+    </select>
+
+    <insert id="saveCcomment" parameterType="com.ecut.domain.Ccomment">
+        insert into t_ccomment (id, nickname, email,
+        content, avatar, create_time,
+        blog_id,parent_comment_id,replyname,adminComment)
+        values (#{id}, #{nickname}, #{email},
+        #{content}, #{avatar}, #{createTime},
+        #{blogId}, #{parentCommentId},#{replyname},#{adminComment})
+    </insert>
+
+
+</mapper>
