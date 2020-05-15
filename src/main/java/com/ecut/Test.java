@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class Test {
     public static void main(String[] args) {
-        System.out.println("z");
         SpringApplication.run(Test.class, args);
     }
 
